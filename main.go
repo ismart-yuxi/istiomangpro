@@ -24,7 +24,6 @@ func cross() gin.HandlerFunc {
 		if method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusNoContent)
 		}
-
 	}
 }
 func main() {
@@ -33,13 +32,11 @@ func main() {
 		bootstrap.NewK8sConfig(),          //2
 		bootstrap.NewIstioMaps(),          //3
 		bootstrap.NewIstioServiceConfig(), //4
-	).
-		Mount("",
-			vs.NewVsCtl(),
-			gw.NewGateWayCtl(),
-			namespace.NewNsCtl(),
-			wscore.NewWsCtl(),
-		)
+	).Mount("",
+		vs.NewVsCtl(),
+		gw.NewGateWayCtl(),
+		namespace.NewNsCtl(),
+		wscore.NewWsCtl(),
+	)
 	server.Launch()
-
 }

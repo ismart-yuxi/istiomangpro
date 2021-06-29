@@ -3,7 +3,6 @@ package namespace
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/shenyisyn/goft-gin/goft"
-	"istiomang/common/response"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -16,7 +15,7 @@ func NewNsCtl() *NsCtl {
 	return &NsCtl{}
 }
 
-func (this *NsCtl) ListAll(c *gin.Context) {
+func (this *NsCtl) ListAll(c *gin.Context) goft.Json {
 	list, err := this.Client.CoreV1().Namespaces().List(c, v1.ListOptions{})
 	goft.Error(err)
 
@@ -28,13 +27,14 @@ func (this *NsCtl) ListAll(c *gin.Context) {
 		}
 		ret[index] = &NsModel{Name: item.Name, Istio: istio}
 	}
-	response.Success(c, "命名空间", ret)
+	return gin.H{
+		"code": 20000,
+		"data": ret,
+	}
 }
-
 func (*NsCtl) Name() string {
 	return "VsCtl"
 }
-
 func (this *NsCtl) Build(goft *goft.Goft) {
 	goft.Handle("GET", "/nslist", this.ListAll)
 }

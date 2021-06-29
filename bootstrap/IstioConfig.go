@@ -1,11 +1,11 @@
 package bootstrap
 
 import (
+	istio "istio.io/client-go/pkg/clientset/versioned"
 	"istio.io/client-go/pkg/informers/externalversions"
+	"istiomang/common/variable"
 	"istiomang/pkg/gw"
 	"istiomang/pkg/vs"
-
-	istio "istio.io/client-go/pkg/clientset/versioned"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -29,8 +29,11 @@ func (this *K8sConfig) IstioRestClient() *istio.Clientset {
 	return client
 }
 func (*K8sConfig) K8sRestConfig() *rest.Config {
-	config, err := clientcmd.BuildConfigFromFlags("", "./resources/config")
-	config.Insecure = true
+
+	//  string(os.PathSeparator)
+
+	config, err := clientcmd.BuildConfigFromFlags("", variable.BasePath+"\\"+"resources"+"\\"+"master.config")
+	//config.Insecure = true
 	if err != nil {
 		log.Fatal(err)
 	}

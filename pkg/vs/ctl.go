@@ -5,7 +5,6 @@ import (
 	"github.com/shenyisyn/goft-gin/goft"
 	"istio.io/client-go/pkg/apis/networking/v1alpha3"
 	istio "istio.io/client-go/pkg/clientset/versioned"
-	"istiomang/common/response"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -17,22 +16,26 @@ type VsCtl struct {
 func NewVsCtl() *VsCtl {
 	return &VsCtl{}
 }
-
-func (this *VsCtl) VsList(c *gin.Context) {
+func (this *VsCtl) VsList(c *gin.Context) goft.Json {
 	ns := c.DefaultQuery("ns", "default")
-	response.Success(c, "查询虚拟服务", this.VsService.ListVs(ns))
+	return gin.H{
+		"code": 20000,
+		"data": this.VsService.ListVs(ns),
+	}
 }
-
-func (this *VsCtl) DeleteVS(c *gin.Context) {
+func (this *VsCtl) DeleteVS(c *gin.Context) goft.Json {
 	ns := c.DefaultQuery("ns", "default")
 	name := c.DefaultQuery("name", "name")
 	err := this.Client.NetworkingV1alpha3().VirtualServices(ns).Delete(c, name, v1.DeleteOptions{})
 	goft.Error(err)
-	response.Success(c, "删除虚拟服务", this.VsService.ListVs(ns))
+	return gin.H{
+		"code": 20000,
+		"data": "success",
+	}
 }
 
 //
-func (this *VsCtl) SaveVS(c *gin.Context) {
+func (this *VsCtl) SaveVS(c *gin.Context) goft.Json {
 	//同时处理 创建或更新操作
 	isupdate := c.DefaultQuery("update", "")
 	vs := &v1alpha3.VirtualService{}
@@ -47,20 +50,28 @@ func (this *VsCtl) SaveVS(c *gin.Context) {
 		vs.ResourceVersion = oldVS.ResourceVersion            //资源版本
 		_, err := this.Client.NetworkingV1alpha3().VirtualServices(vs.Namespace).Update(c, vs, v1.UpdateOptions{})
 		goft.Error(err)
+
 	}
-	response.Success(c, "保存虚拟服务", nil)
+
+	return gin.H{
+		"code": 20000,
+		"data": "success",
+	}
 }
 
-func (this *VsCtl) VsDetail(c *gin.Context) {
+func (this *VsCtl) VsDetail(c *gin.Context) goft.Json {
 	ns := c.Param("ns")
 	name := c.Param("name")
-	response.Success(c, "虚拟服务详情", this.VsService.LoadVs(ns, name))
+
+	return gin.H{
+		"code": 20000,
+		"data": this.VsService.LoadVs(ns, name),
+	}
 }
 
 func (*VsCtl) Name() string {
 	return "VsCtl"
 }
-
 func (this *VsCtl) Build(goft *goft.Goft) {
 	goft.Handle("GET", "/virtualservices", this.VsList)
 	goft.Handle("POST", "/virtualservices", this.SaveVS)

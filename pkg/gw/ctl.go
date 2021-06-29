@@ -5,7 +5,6 @@ import (
 	"github.com/shenyisyn/goft-gin/goft"
 	"istio.io/client-go/pkg/apis/networking/v1alpha3"
 	istio "istio.io/client-go/pkg/clientset/versioned"
-	"istiomang/common/response"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -18,7 +17,7 @@ func NewGateWayCtl() *GateWayCtl {
 	return &GateWayCtl{}
 }
 
-func (this *GateWayCtl) SaveGateWay(c *gin.Context) {
+func (this *GateWayCtl) SaveGateWay(c *gin.Context) goft.Json {
 	gw := &v1alpha3.Gateway{}
 	goft.Error(c.ShouldBindJSON(gw))
 
@@ -32,11 +31,15 @@ func (this *GateWayCtl) SaveGateWay(c *gin.Context) {
 		_, err := this.Client.NetworkingV1alpha3().Gateways(gw.Namespace).Create(c, gw, v1.CreateOptions{})
 		goft.Error(err)
 	}
-	response.Success(c, "保存网关", nil)
+
+	return gin.H{
+		"code": 20000,
+		"data": "success",
+	}
 }
 
 //接收ns参数，有则显示 ns下的，没有则显示全部， 全部的话是一个map
-func (this *GateWayCtl) GwList(c *gin.Context) {
+func (this *GateWayCtl) GwList(c *gin.Context) goft.Json {
 	ns := c.DefaultQuery("ns", "")
 	var ret interface{}
 	if ns == "" {
@@ -45,26 +48,34 @@ func (this *GateWayCtl) GwList(c *gin.Context) {
 	} else {
 		ret = this.GwService.ListGW(ns)
 	}
-	response.Success(c, "网关列表", ret)
+	return gin.H{
+		"code": 20000,
+		"data": ret,
+	}
 }
 
 //加载网关详细
-func (this *GateWayCtl) LoadGW(c *gin.Context) {
+func (this *GateWayCtl) LoadGW(c *gin.Context) goft.Json {
 	ns := c.Param("ns")
 	name := c.Param("name")
-	response.Success(c, "网关详情", this.GwService.LoadGw(ns, name))
-}
 
-func (this *GateWayCtl) DeleteGW(c *gin.Context) {
+	return gin.H{
+		"code": 20000,
+		"data": this.GwService.LoadGw(ns, name),
+	}
+}
+func (this *GateWayCtl) DeleteGW(c *gin.Context) goft.Json {
 	ns := c.Param("ns")
 	name := c.Param("name")
 	goft.Error(this.Client.NetworkingV1alpha3().Gateways(ns).Delete(c, name, v1.DeleteOptions{}))
-	response.Success(c, "删除网关", nil)
+	return gin.H{
+		"code": 20000,
+		"data": "success",
+	}
 }
 func (*GateWayCtl) Name() string {
 	return "GateWayCtl"
 }
-
 func (this *GateWayCtl) Build(goft *goft.Goft) {
 	goft.Handle("GET", "/gateways", this.GwList)
 	goft.Handle("POST", "/gateways", this.SaveGateWay)
