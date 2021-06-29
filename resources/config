@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Config
+clusters:
+- name: "mycluster"
+  cluster:
+    server: "https://39.105.28.235:8443/k8s/clusters/c-gfv2c"
+- name: "mycluster-dsjs"
+  cluster:
+    server: "https://39.105.28.235:6443"
+users:
+- name: "mycluster"
+  user:
+    token: "kubeconfig-user-mtxnk.c-gfv2c:h86t2zzpjcq8lksd82l24l6ld7pkdwsh4264thvbfxldntkmdmf2c8"
+
+contexts:
+- name: "mycluster"
+  context:
+    user: "mycluster"
+    cluster: "mycluster"
+- name: "mycluster-dsjs"
+  context:
+    user: "mycluster"
+    cluster: "mycluster-dsjs"
+
+current-context: "mycluster-dsjs"

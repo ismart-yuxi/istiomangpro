@@ -1,0 +1,8 @@
+syntax = "proto3";
+option go_package = "grpcpro/src/pbfiles";
+
+message UserLogin {
+    string name=1;
+    string pass=2;
+
+}
