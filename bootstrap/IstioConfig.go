@@ -1,11 +1,12 @@
 package bootstrap
 
 import (
-	istio "istio.io/client-go/pkg/clientset/versioned"
 	"istio.io/client-go/pkg/informers/externalversions"
-	"istiomang/common/variable"
+	"istiomang/pkg/ds"
 	"istiomang/pkg/gw"
 	"istiomang/pkg/vs"
+
+	istio "istio.io/client-go/pkg/clientset/versioned"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -16,6 +17,7 @@ import (
 type K8sConfig struct {
 	VsHandler *vs.VsHandler      `inject:"-"`
 	GwHandler *gw.GateWayHandler `inject:"-"`
+	DsHandler *ds.DsHandler      `inject:"-"`
 }
 
 func NewK8sConfig() *K8sConfig {
@@ -29,11 +31,8 @@ func (this *K8sConfig) IstioRestClient() *istio.Clientset {
 	return client
 }
 func (*K8sConfig) K8sRestConfig() *rest.Config {
-
-	//  string(os.PathSeparator)
-
-	config, err := clientcmd.BuildConfigFromFlags("", variable.BasePath+"\\"+"resources"+"\\"+"master.config")
-	//config.Insecure = true
+	config, err := clientcmd.BuildConfigFromFlags("", "./resources/config")
+	config.Insecure = true
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,6 +41,7 @@ func (*K8sConfig) K8sRestConfig() *rest.Config {
 
 //初始化client-go客户端
 func (this *K8sConfig) InitClient() *kubernetes.Clientset {
+
 	c, err := kubernetes.NewForConfig(this.K8sRestConfig())
 	if err != nil {
 		log.Fatal(err)
@@ -54,6 +54,9 @@ func (this *K8sConfig) InitInformer() externalversions.SharedInformerFactory {
 	fact := externalversions.NewSharedInformerFactoryWithOptions(this.IstioRestClient(), 0)
 	//虚拟服务的监听
 	fact.Networking().V1alpha3().VirtualServices().Informer().AddEventHandler(this.VsHandler)
+
+	//DestinationRules监听
+	fact.Networking().V1alpha3().DestinationRules().Informer().AddEventHandler(this.DsHandler)
 
 	//gateway的监听
 	fact.Networking().V1alpha3().Gateways().Informer().AddEventHandler(this.GwHandler)

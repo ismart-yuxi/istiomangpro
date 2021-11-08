@@ -11,6 +11,10 @@ import (
 	"net/http"
 )
 
+const (
+	version = "/v1/"
+)
+
 func cross() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
@@ -32,7 +36,7 @@ func main() {
 		bootstrap.NewK8sConfig(),          //2
 		bootstrap.NewIstioMaps(),          //3
 		bootstrap.NewIstioServiceConfig(), //4
-	).Mount("",
+	).Mount(version,
 		vs.NewVsCtl(),
 		gw.NewGateWayCtl(),
 		namespace.NewNsCtl(),

@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"istiomang/pkg/ds"
 	"istiomang/pkg/gw"
 	"istiomang/pkg/vs"
 )
@@ -16,4 +17,8 @@ func (*IstioServiceConfig) VsService() *vs.VsService {
 }
 func (*IstioServiceConfig) GwService() *gw.GateWayService {
 	return gw.NewGateWayService()
+}
+
+func (*IstioServiceConfig) DsService() *ds.DsService {
+	return ds.NewDsService()
 }

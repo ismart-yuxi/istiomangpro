@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"os"
+	"os/exec"
 	"testing"
 )
 
@@ -22,4 +24,17 @@ import (
 func TestPathSeparator(t *testing.T) {
 	fmt.Println(string(os.PathSeparator))
 	assert.Equal(t, "\\", string(os.PathSeparator))
+}
+
+func TestCommander(t *testing.T) {
+	cmd := exec.Command("ls", "-lah")
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		fmt.Printf("cmd.Run failed with %s\n", err)
+	}
+	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
+	fmt.Printf("out: %s\n err: %s\n", outStr, errStr)
 }
