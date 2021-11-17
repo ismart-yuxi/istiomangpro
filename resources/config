@@ -1,25 +1,18 @@
 apiVersion: v1
-kind: Config
 clusters:
-- name: "mycluster"
-  cluster:
-    server: "https://39.105.28.235:8443/k8s/clusters/c-gfv2c"
-- name: "mycluster-dsjs"
-  cluster:
-    server: "https://39.105.28.235:6443"
-users:
-- name: "mycluster"
-  user:
-    token: "kubeconfig-user-mtxnk.c-gfv2c:h86t2zzpjcq8lksd82l24l6ld7pkdwsh4264thvbfxldntkmdmf2c8"
-
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN3akNDQWFxZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFTTVJBd0RnWURWUVFERXdkcmRXSmwKTFdOaE1CNFhEVEU0TVRJeE1URXlNVGt3TVZvWERUSTRNVEl3T0RFeU1Ua3dNVm93RWpFUU1BNEdBMVVFQXhNSAphM1ZpWlMxallUQ0NBU0l3RFFZSktvWklodmNOQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQUtIZnBJbE5OeDF0CmRJWFNnbXRBZG5qVVhqcXErcmhCZjJ4S25ZbWlxMVFMaUdtRUlBd3AyMzI1cFZwVzFvNUZoYW5KbExoV2xOeDIKQ3JtVnN5MjBhOUx1SkI2SjNFMmYzTEhUVmxxRVZsTWFNY1pCcGlQbXdUNEtMN3pSaG1yNlZNZ1F0emRrKzdIQQppOE02VGFRMDhVd01zTi90U3NEWXhpOFRZRkExTi91Tzh1eHBSK2s1Y0xDY0JsZFd4d2E0YmFEbEp3Qk1Wam1qCkRHaUZQbzdnWXhnWDJqMmhCaUlqeWF5NFk5clBlemRHY1pHT3RCOHVEK1JYQmp5Tk1HOEo4SnV4V0pXeUxpTUcKYy8zcnRpL3Y4WFl6VS9CbXJKWnpkc29aRjFIdFhvajd1QjNURDJ3TzZmSFY3VEQ4ZTl1YU9WVFFjMUN4SDFicgpFS2VkUVIyeExzY0NBd0VBQWFNak1DRXdEZ1lEVlIwUEFRSC9CQVFEQWdLa01BOEdBMVVkRXdFQi93UUZNQU1CCkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBR2w5eW5LYlkwWnVlc2hKUlB2MGJhVWxuK2l2Ujg5MzhBNzUKVUQzOHBJeHh1MlFoaFRRQjAxM1poMjUwNVRzTDAwdVFRS3RYVkJPQVFHUXZSUS8rUzdLaDdQNjlRcXgrbXpTMApCbXlnb1hvcnR2V2ZIanJNRU8zeE1QWFl0Rlp3S1o0NTBVaDRsbXcvdmd6VWF0UTZFNGJZK2Jucnk0UnIzcmVGCnRjajByMVdnSGJGN1k1aTNkaWZsaWJUbE1BWkdDa1F3UnJPd3NSV0poNnY3M2Fhay9pdHlPZDM0dytBbjU3VGEKZFVjVm4yS1VTc0o4VmkwWGFYdlI2cytETnZQMEp2Q1NaS0xXam01OEdFVjVFTVhTUkRjYTNtYWthLzI4NUxmZgpzYXpWd3lFWUl6Vy80OHY2aTNwU21VM1k1clNDWWRwM3lJaEpqcWNId1hESndjVExlTTA9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    server: https://192.168.66.201:6443
+  name: local
 contexts:
-- name: "mycluster"
-  context:
-    user: "mycluster"
-    cluster: "mycluster"
-- name: "mycluster-dsjs"
-  context:
-    user: "mycluster"
-    cluster: "mycluster-dsjs"
-
-current-context: "mycluster-dsjs"
+- context:
+    cluster: local
+    user: kube-admin
+  name: Default
+current-context: Default
+kind: Config
+preferences: {}
+users:
+- name: kube-admin
+  user:
+    token: eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJjbHVzdGVyLWFkbWluLXRva2VuLWY4bmZiIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImNsdXN0ZXItYWRtaW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJhOGNlMzBkMS1kNDc3LTExZTktODQyZC0wMDBjMjkyYTU4ZTUiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06Y2x1c3Rlci1hZG1pbiJ9.nP3Ut5ME5FFI9HzgQJzdHA0dq5oxqAZB0yKFvMRZSwtME9-LVRGvCxIPWDDgwxcBHwNxqeNnYCNHpqwjTHemukw2TixzdJDnLLsj01sRvVLFcbG9ovecx63PT9uC6ffS0ebU4Z9qavVVC7Lt8VqSo8MNm3qPW53P_XEHwIgJB0pEuKVl2Px2JgQ0Kjehm-pAbP3FHjmHyAKc6QvWQt-Ss_19uJ_hRw-pD5dc7uoc6KQFKEx9LD567INSkePqohNoPrem814CsoolK3ct01HLs62pcpncg9sXGV_wbc-8CMztD927xCoVXO-5bKoy_DwechYdh2gsff7WzQ0WYABj0A
