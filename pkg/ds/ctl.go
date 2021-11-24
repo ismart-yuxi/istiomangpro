@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/shenyisyn/goft-gin/goft"
 	"istio.io/client-go/pkg/apis/networking/v1alpha3"
+	"istiomang/common"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	istio "istio.io/client-go/pkg/clientset/versioned"
@@ -18,18 +19,14 @@ func NewDsCtl() *DsCtl {
 	return &DsCtl{}
 }
 
-//接收ns参数，有则显示 ns下的，没有则显示全部， 全部的话是一个map
+// DsList 接收ns参数，有则显示 ns下的，没有则显示全部， 全部的话是一个map
 func (this *DsCtl) DsList(c *gin.Context) goft.Json {
 
 	ns := c.DefaultQuery("ns", "")
-	ret := this.DsService.ListDs(ns)
-	return gin.H{
-		"code": 20000,
-		"data": ret,
-	}
+	return common.Success(this.DsService.ListDs(ns))
 }
 
-//创建和 修改
+// SaveDS 创建和 修改
 func (this *DsCtl) SaveDS(c *gin.Context) goft.Json {
 	ds := &v1alpha3.DestinationRule{}
 	goft.Error(c.ShouldBindJSON(ds))
@@ -47,33 +44,25 @@ func (this *DsCtl) SaveDS(c *gin.Context) goft.Json {
 		goft.Error(err)
 	}
 
-	return gin.H{
-		"code": 20000,
-		"data": "success",
-	}
+	return common.Success(nil)
 }
 func (this *DsCtl) DeleteDS(c *gin.Context) goft.Json {
 	ns := c.Param("ns")
 	name := c.Param("name")
 	goft.Error(this.Client.NetworkingV1alpha3().DestinationRules(ns).Delete(c, name, v1.DeleteOptions{}))
-	return gin.H{
-		"code": 20000,
-		"data": "success",
-	}
+	return common.Success(nil)
 }
 
 //加载ds详细
 func (this *DsCtl) LoadDS(c *gin.Context) goft.Json {
 	ns := c.Param("ns")
 	name := c.Param("name")
-	return gin.H{
-		"code": 20000,
-		"data": this.DsService.LoadDs(ns, name),
-	}
+	return common.Success(this.DsService.LoadDs(ns, name))
 }
 func (*DsCtl) Name() string {
 	return "DsCtl"
 }
+
 func (this *DsCtl) Build(goft *goft.Goft) {
 	goft.Handle("GET", "/destinationrule", this.DsList)
 

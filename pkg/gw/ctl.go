@@ -5,6 +5,7 @@ import (
 	"github.com/shenyisyn/goft-gin/goft"
 	"istio.io/client-go/pkg/apis/networking/v1alpha3"
 	istio "istio.io/client-go/pkg/clientset/versioned"
+	"istiomang/common"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -38,44 +39,36 @@ func (this *GateWayCtl) SaveGateWay(c *gin.Context) goft.Json {
 	}
 }
 
-//接收ns参数，有则显示 ns下的，没有则显示全部， 全部的话是一个map
+// GwList 接收ns参数，有则显示 ns下的，没有则显示全部， 全部的话是一个map
 func (this *GateWayCtl) GwList(c *gin.Context) goft.Json {
 	ns := c.DefaultQuery("ns", "")
 	var ret interface{}
 	if ns == "" {
-
 		ret = this.GwService.ListAll()
 	} else {
 		ret = this.GwService.ListGW(ns)
 	}
-	return gin.H{
-		"code": 20000,
-		"data": ret,
-	}
+	return common.Success(ret)
 }
 
-//加载网关详细
+// LoadGW 加载网关详细
 func (this *GateWayCtl) LoadGW(c *gin.Context) goft.Json {
 	ns := c.Param("ns")
 	name := c.Param("name")
-
-	return gin.H{
-		"code": 20000,
-		"data": this.GwService.LoadGw(ns, name),
-	}
+	return common.Success(this.GwService.LoadGw(ns, name))
 }
+
 func (this *GateWayCtl) DeleteGW(c *gin.Context) goft.Json {
 	ns := c.Param("ns")
 	name := c.Param("name")
 	goft.Error(this.Client.NetworkingV1alpha3().Gateways(ns).Delete(c, name, v1.DeleteOptions{}))
-	return gin.H{
-		"code": 20000,
-		"data": "success",
-	}
+	return common.Success(nil)
 }
+
 func (*GateWayCtl) Name() string {
 	return "GateWayCtl"
 }
+
 func (this *GateWayCtl) Build(goft *goft.Goft) {
 	goft.Handle("GET", "/gateways", this.GwList)
 	goft.Handle("POST", "/gateways", this.SaveGateWay)

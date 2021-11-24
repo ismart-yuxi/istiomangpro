@@ -5,6 +5,7 @@ import (
 	"github.com/shenyisyn/goft-gin/goft"
 	"istio.io/client-go/pkg/apis/networking/v1alpha3"
 	istio "istio.io/client-go/pkg/clientset/versioned"
+	"istiomang/common"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -18,23 +19,17 @@ func NewVsCtl() *VsCtl {
 }
 func (this *VsCtl) VsList(c *gin.Context) goft.Json {
 	ns := c.DefaultQuery("ns", "default")
-	return gin.H{
-		"code": 20000,
-		"data": this.VsService.ListVs(ns),
-	}
+	return common.Success(this.VsService.ListVs(ns))
 }
 func (this *VsCtl) DeleteVS(c *gin.Context) goft.Json {
 	ns := c.DefaultQuery("ns", "default")
 	name := c.DefaultQuery("name", "name")
 	err := this.Client.NetworkingV1alpha3().VirtualServices(ns).Delete(c, name, v1.DeleteOptions{})
 	goft.Error(err)
-	return gin.H{
-		"code": 20000,
-		"data": "success",
-	}
+	return common.Success(nil)
 }
 
-//
+// SaveVS 保存vs
 func (this *VsCtl) SaveVS(c *gin.Context) goft.Json {
 	//同时处理 创建或更新操作
 	isupdate := c.DefaultQuery("update", "")
@@ -52,26 +47,19 @@ func (this *VsCtl) SaveVS(c *gin.Context) goft.Json {
 		goft.Error(err)
 
 	}
-
-	return gin.H{
-		"code": 20000,
-		"data": "success",
-	}
+	return common.Success(nil)
 }
 
 func (this *VsCtl) VsDetail(c *gin.Context) goft.Json {
 	ns := c.Param("ns")
 	name := c.Param("name")
-
-	return gin.H{
-		"code": 20000,
-		"data": this.VsService.LoadVs(ns, name),
-	}
+	return common.Success(this.VsService.LoadVs(ns, name))
 }
 
 func (*VsCtl) Name() string {
 	return "VsCtl"
 }
+
 func (this *VsCtl) Build(goft *goft.Goft) {
 	goft.Handle("GET", "/virtualservices", this.VsList)
 	goft.Handle("POST", "/virtualservices", this.SaveVS)

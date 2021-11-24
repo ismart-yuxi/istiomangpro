@@ -1,9 +1,12 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/shenyisyn/goft-gin/goft"
 	"istiomang/bootstrap"
+	"istiomang/pkg/ds"
 	"istiomang/pkg/gw"
+	"istiomang/pkg/healthcheck"
 	"istiomang/pkg/vs"
 	"istiomang/pkg/wscore"
 )
@@ -27,15 +30,27 @@ const (
 //		}
 //	}
 //}
+
+func headerStandardization() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		method := c.Request.Method
+		if method != "" {
+			c.Header("Content-Type", "application/json; charset=utf-8")
+		}
+		c.Next()
+	}
+}
 func main() {
-	server := goft.Ignite().Config(
+	server := goft.Ignite(headerStandardization()).Config(
 		bootstrap.NewIstioHandler(),       //1
 		bootstrap.NewK8sConfig(),          //2
 		bootstrap.NewIstioMaps(),          //3
 		bootstrap.NewIstioServiceConfig(), //4
 	).Mount(version,
-		vs.NewVsCtl(),
+		healthcheck.NewHealthCheckCtl(), //健康检查
 		gw.NewGateWayCtl(),
+		ds.NewDsCtl(),
+		vs.NewVsCtl(),
 		wscore.NewWsCtl(),
 	)
 	server.Launch()
